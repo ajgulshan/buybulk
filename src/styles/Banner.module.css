@@ -1,0 +1,47 @@
+.banner {
+  width: 100%;
+  max-width: 1200px; /* Adjusts to screen size */
+  margin: 0 auto; /* Center the banner */
+  padding: 10px;
+}
+
+.swiper {
+  width: 100%;
+  height: 400px; /* Default height for desktop */
+  border-radius: 10px; /* Optional: adds rounded corners */
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the slide */
+}
+
+/* Pagination Dots */
+.swiper-pagination-bullet {
+  background: white !important;
+  opacity: 0.7;
+}
+
+.swiper-pagination-bullet-active {
+  background: #007bff !important; /* Active dot color */
+}
+
+/* Navigation Buttons */
+.swiper-button-prev,
+.swiper-button-next {
+  color: white !important; /* Navigation arrows color */
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+  .swiper {
+    height: 250px; /* Decrease height for smaller screens */
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none; /* Hide navigation buttons on small screens */
+  }
+}
