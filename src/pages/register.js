@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import styles from "../styles/RegistrationForm.module.css";
 
 const RegistrationForm = () => {
+  
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
   const [city, setCity] = useState("");
 
@@ -20,8 +21,14 @@ const RegistrationForm = () => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Form Data:", data);
+    //e.preventDefault();
+    await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
   };
 
   return (

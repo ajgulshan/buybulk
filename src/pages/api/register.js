@@ -1,33 +1,25 @@
-import connectDB from "../../lib/connectDB";
-import User from "../../models/User"; // Ensure you have a User model
-console.log("test1reg55");
+import mysql from "mysql2/promise";
+
 export default async function handler(req, res) {
-  await connectDB(); // Ensure MongoDB is connected before processing
-  console.log("test1reg");
-  if (req.method === "POST") {
-    console.log("test1");
-    try {
-      const { name, gender, state, city, mobile, email, password } = req.body;
-      console.log("test2");
+  console.log(req.body);
+  if (req.method !== "POST") return res.status(405).end();
 
-      // Check if the user already exists
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ success: false, message: "User already exists" });
-      }
+  console.log("test1reg55");
+  const { name, gender,email,mobile,gst,customerType,address,pincode,city } = req.body;
 
-      // Create new user
-      const newUser = new User({ name, gender, state, city, mobile, email, password });
-      await newUser.save();
-      console.log("test3");
+  try {
+    const db = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+    });
 
-      return res.status(201).json({ success: true, message: "User registered successfully" });
-    } catch (error) {
-      console.log("test1catch");
-      console.error("Error registering user:", error);
-      return res.status(500).json({ success: false, message: "Internal Server Error" });
-    }
+    await db.execute("INSERT INTO Users (name, gender,email,mobile,gst,customerType,address,pincode,city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, gender,email,mobile,gst,customerType,address,pincode,city]);
+
+    res.status(200).json({ message: "User registered successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
   }
-  console.log("testlast");
-  return res.status(405).json({ success: false, message: "Method Not Allowed" });
 }
