@@ -1,11 +1,9 @@
 import mysql from "mysql2/promise";
 
 export default async function handler(req, res) {
-  console.log(req.body);
   if (req.method !== "POST") return res.status(405).end();
 
-  console.log("test1reg55");
-  const { name, gender,email,mobile,gst,customerType,address,pincode,city } = req.body;
+  const { name, gender, email, mobile, gst, customerType, address, pincode, city } = req.body;
 
   try {
     const db = await mysql.createConnection({
@@ -15,9 +13,23 @@ export default async function handler(req, res) {
       database: process.env.DB_NAME,
     });
 
-    await db.execute("INSERT INTO Users (name, gender,email,mobile,gst,customerType,address,pincode,city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, gender,email,mobile,gst,customerType,address,pincode,city]);
+    //const [existingUser] = await db.execute("SELECT * FROM Users WHERE mobile = ?", [mobile]);
+    const [existingUser] = await db.execute(
+      "SELECT * FROM Users WHERE mobile = ? OR email = ?",
+      [mobile, email]
+    );
+    
+    if (existingUser.length > 0) {
+      return res.status(409).json({ error: "Mobile number or email already exists, kidly login or register with new number" });
+    }
+
+    await db.execute(
+      "INSERT INTO Users (name, gender, email, mobile, gst, customerType, address, pincode, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [name, gender, email, mobile, gst, customerType, address, pincode, city]
+    );
 
     res.status(200).json({ message: "User registered successfully" });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });

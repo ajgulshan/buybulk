@@ -4,6 +4,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "../styles/Banner.module.css";
+import Link from "next/link";
 
 const Banner = () => {
   return (
@@ -17,13 +18,19 @@ const Banner = () => {
         navigation
       >
         <SwiperSlide>
-          <img src="Banner1.avif" alt="Banner 1" className={styles.image} />
+          <Link href="/auction">
+            <img src="uploads/bb1.jpeg" alt="Banner 1" className={styles.image} />
+          </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <img src="Banner2.jpg" alt="Banner 2" className={styles.image} />
+          <Link href="/auction">
+            <img src="uploads/bb2.jpeg" alt="Banner 2" className={styles.image} />
+          </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <img src="Banner3.jpeg" alt="Banner 3" className={styles.image} />
+          <Link href="/auction">
+            <img src="uploads/bb3.jpeg" alt="Banner 3" className={styles.image} />
+          </Link>
         </SwiperSlide>
       </Swiper>
     </div>

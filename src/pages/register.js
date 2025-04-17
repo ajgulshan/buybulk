@@ -22,14 +22,27 @@ const RegistrationForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Form Data:", data);
-    //e.preventDefault();
-    await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+  
+      const result = await res.json();
+  
+      if (!res.ok) {
+        // Show error popup
+        alert(result.error || "Something went wrong");
+      } else {
+        alert("User registered successfully!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong!");
+    }
   };
+  
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
