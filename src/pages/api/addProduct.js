@@ -34,8 +34,12 @@ export default async function handler(req, res) {
     const quantity = fields.quantity?.[0] ?? null;
     const verified = fields.verified?.[0] ?? null;
     const description = fields.description?.[0] ?? null;
-    const image = files.image ? files.image.newFilename : null;
-    
+    const image = files.image ? `${sku}.jpg` : null;
+    if (files.image && sku) {
+      const oldPath = files.image[0].filepath;
+      const newPath = path.join(process.cwd(), "public/uploads", `${sku}.jpg`); 
+      fs.renameSync(oldPath, newPath);
+    }
 
     try {
       const db = await mysql.createConnection({

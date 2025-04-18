@@ -69,19 +69,20 @@ export default function NewArrival() {
       <div key={index} className={styles.grid}>
         {chunk.map((product) => (
           <div key={product.sku} className={styles.card}>
-            <h2>{product.name}</h2>
+            <h2><strong>{product.name}</strong></h2>
             <img
-              src={`/uploads/${product.image || "cloth.jpeg"}`}
+              src={`/uploads/${product.sku ? product.sku + ".jpg" : "cloth.jpg"}`}
               alt={product.name}
               className={styles.productImage}
             />
-            <p>{product.description}</p>
+            
             <p><strong>Verified:</strong> {product.verified}</p>
             <p><strong>Quantity:</strong> {product.quantity}</p>
             <p><strong>Brand:</strong> {product.brand}</p>
             <p><strong>MRP:</strong> ₹{product.mrp}</p>
-            <p><strong>Offer Price:</strong> ₹{product.offerprice}</p>
+            <p><strong>Offer Price:</strong> ₹{product.offerPrice}</p>
             <button className={styles.cardButton} onClick={() => handleNotify(product)}>Notify Me</button>
+            <p>{product.description}</p>
           </div>
         ))}
       </div>
