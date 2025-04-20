@@ -46,7 +46,7 @@ const RegistrationForm = () => {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-      <h2>Registration Form</h2>
+      <h2><strong>Registration Form</strong></h2>
 
       {/* Name Field */}
       <label>Name:</label>
@@ -87,8 +87,10 @@ const RegistrationForm = () => {
       <label>Customer Type:</label>
       <select {...register("customerType", { required: "Customer type is required" })}>
         <option value="">Select Type</option>
-        <option value="individual">Individual</option>
-        <option value="business">Business</option>
+        <option value="Buyer">Buyer</option>
+        <option value="Seller">Seller</option>
+        <option value="Manufacturer">Manufacturer</option>
+        <option value="both">Buyer-Seller</option>
       </select>
       {errors.customerType && <span className={styles.error}>{errors.customerType.message}</span>}
 
@@ -108,8 +110,7 @@ const RegistrationForm = () => {
 
       {/* City Field (Auto-filled) */}
       <label>City:</label>
-      <input {...register("city")} type="text" value={city} readOnly />
-
+      <input {...register("city")} type="text" placeholder="Optional" />
       <button type="submit">Register</button>
     </form>
   );

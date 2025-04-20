@@ -19,6 +19,11 @@ export default function Home() {
         
         {/* Catalog Promo Section */}
         <CatalogPromo />
+        <h2>Our Catalog</h2>
+        <p>Discover our amazing services and solutions designed just for you with best and Catalog Styling Products.</p>
+        <div className={styles.live}>
+          <a href="/new-arrival" className={styles.button}>New Arrivals</a>
+        </div>
         {/* Video Section */}
         <div className={styles.videoContainer}>
           <video className={styles.responsiveVideo} controls autoPlay loop muted>

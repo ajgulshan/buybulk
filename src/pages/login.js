@@ -1,45 +1,106 @@
 import { useState } from "react";
-import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "../firebase";
-import { useRouter } from "next/router";
 
-export default function Login() {
+export default function LoginPage() {
+  const [step, setStep] = useState(1);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [confirmation, setConfirmation] = useState(null);
-  const router = useRouter();
 
   const sendOtp = async () => {
-    try {
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-          size: "invisible",
-        });
-      }
-      const appVerifier = window.recaptchaVerifier;
-      const confirmationResult = await signInWithPhoneNumber(auth, phone, appVerifier);
-      setConfirmation(confirmationResult);
-    } catch (error) {
-      console.error("Error sending OTP:", error);
-    }
+    const res = await fetch("/api/sendOtp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone }),
+    });
+    const data = await res.json();
+    alert(data.message);
+    if (res.ok) setStep(2);
   };
 
   const verifyOtp = async () => {
-    try {
-      await confirmation.confirm(otp);
-      router.reload(); // Reload page after login success
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
+    const res = await fetch("/api/verifyOtp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, otp }),
+    });
+    const data = await res.json();
+    alert(data.message);
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      // Redirect if needed
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter phone number" />
-      <button onClick={sendOtp}>Send OTP</button>
-      <div id="recaptcha-container"></div>
-      <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter OTP" />
-      <button onClick={verifyOtp}>Verify OTP</button>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.heading}>Login with OTP</h2>
+
+        {step === 1 && (
+          <>
+            <input
+              style={styles.input}
+              placeholder="Enter Mobile Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <button style={styles.button} onClick={sendOtp}>Send OTP</button>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <input
+              style={styles.input}
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <button style={styles.button} onClick={verifyOtp}>Verify OTP</button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#f2f2f2",
+    padding: "1rem",
+  },
+  card: {
+    background: "#fff",
+    padding: "2rem",
+    borderRadius: "10px",
+    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+    width: "100%",
+    maxWidth: "400px",
+  },
+  heading: {
+    fontSize: "1.5rem",
+    marginBottom: "1rem",
+    textAlign: "center",
+  },
+  input: {
+    padding: "10px",
+    width: "100%",
+    marginBottom: "1rem",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "1rem",
+  },
+  button: {
+    padding: "10px",
+    width: "100%",
+    backgroundColor: "#0070f3",
+    border: "none",
+    borderRadius: "6px",
+    color: "#fff",
+    fontSize: "1rem",
+    cursor: "pointer",
+  },
+};

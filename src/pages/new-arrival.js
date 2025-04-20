@@ -75,12 +75,11 @@ export default function NewArrival() {
               alt={product.name}
               className={styles.productImage}
             />
-            
+            <p><strong>MRP:</strong> ₹{product.mrp}</p>
             <p><strong>Verified:</strong> {product.verified}</p>
             <p><strong>Quantity:</strong> {product.quantity}</p>
             <p><strong>Brand:</strong> {product.brand}</p>
-            <p><strong>MRP:</strong> ₹{product.mrp}</p>
-            <p><strong>Offer Price:</strong> ₹{product.offerPrice}</p>
+            <p className={styles.offerPrice}><strong>Offer Price:</strong> ₹{product.offerPrice}</p>
             <button className={styles.cardButton} onClick={() => handleNotify(product)}>Notify Me</button>
             <p>{product.description}</p>
           </div>

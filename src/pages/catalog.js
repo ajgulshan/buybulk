@@ -39,7 +39,7 @@ export default function CatalogForm() {
 
   return (
     <form className={styles.container} onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-      <h2 className={styles.heading}>Add Product</h2>
+      <h2 className={styles.heading}><strong>Add Catalog Product</strong></h2>
 
       <label>Name:</label>
       <input className={styles.input}{...register("name", { required: "Name is required" })} type="text" />

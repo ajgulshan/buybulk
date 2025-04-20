@@ -1,29 +1,22 @@
-import connectDb from './connectDb';
-import User from '../../models/User';
-
+// pages/api/sendOtp.js
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ success: false, message: 'Method Not Allowed' });
+  const { phone } = req.body;
 
   try {
-    await connectDb();
-    
-    const { mobile } = req.body;
-    if (!mobile) return res.status(400).json({ success: false, message: 'Mobile number is required' });
+    const response = await fetch(
+      `https://2factor.in/API/V1/${process.env.TWOFACTOR_API_KEY}/SMS/${phone}/AUTOGEN`
+    );
+    const data = await response.json();
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    let user = await User.findOne({ mobile });
-    if (!user) user = await User.create({ mobile, otp });
-    else user.otp = otp;
+    console.log("2Factor response:", data);
 
-    await user.save();
-    
-    console.log(`OTP sent to ${mobile}: ${otp}`); // Replace this with an SMS service
+    if (data.Status !== "Success") {
+      throw new Error("OTP failed to send");
+    }
 
-    return res.json({ success: true, message: 'OTP sent successfully' });
-
-  } catch (error) {
-    console.error('Error in sendOtp:', error);
-    return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    res.status(200).json({ message: "OTP sent successfully", sessionId: data.Details });
+  } catch (err) {
+    console.error("Send OTP Error:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 }
