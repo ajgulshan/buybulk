@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       ]
     );
 
-    res.status(200).json({ message: "Notify request added" });
+    res.status(200).json({ message: "Notify request added, We will Reach to you. Kindly check your email" });
   } catch (error) {
     console.error("Notify DB error:", error);
     res.status(500).json({ error: "Database error while saving notify request" });

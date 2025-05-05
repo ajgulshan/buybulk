@@ -1,32 +1,60 @@
 import { useState } from "react";
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import Message from "../components/Message";
 
 export default function LoginPage() {
   const [step, setStep] = useState(1);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [sessionId, setSessionId] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
 
   const sendOtp = async () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+
     const res = await fetch("/api/sendOtp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone }),
     });
     const data = await res.json();
-    alert(data.message);
-    if (res.ok) setStep(2);
+    if (res.ok) {
+      setSuccessMessage(data.message || "OTP sent successfully");
+      setSessionId(data.sessionId);
+      setStep(2);
+    } else if(phone.length!=10){
+      setErrorMessage("Invalid Phone Number, it should be 10 digit");
+    } else {
+      setErrorMessage(data.error || "Something went wrong. Please try again.");
+    }
   };
 
   const verifyOtp = async () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+
     const res = await fetch("/api/verifyOtp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, otp }),
+      body: JSON.stringify({ phone, otp, sessionId }),
     });
     const data = await res.json();
-    alert(data.message);
-    if (res.ok) {
+
+    if (!res.ok) {
+      setErrorMessage(data.error || "Invalid OTP or verification failed");
+    } else {
+      setSuccessMessage(data.message || "Login successful");
       localStorage.setItem("token", data.token);
-      // Redirect if needed
+      localStorage.setItem("bb", data.encryptedUser);
+      localStorage.setItem("bbn", JSON.stringify(data.cuser));
+      setTimeout(() => {
+        window.location.replace('/');
+      }, 1000);
     }
   };
 
@@ -34,6 +62,9 @@ export default function LoginPage() {
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.heading}>Login with OTP</h2>
+
+        <Message type="success" text={successMessage} />
+        <Message type="error" text={errorMessage} />
 
         {step === 1 && (
           <>
@@ -58,6 +89,10 @@ export default function LoginPage() {
             <button style={styles.button} onClick={verifyOtp}>Verify OTP</button>
           </>
         )}
+
+        <p style={styles.signupText}>
+          New User? <Link href="/register" style={styles.signupLink}>Sign Up</Link>
+        </p>
       </div>
     </div>
   );
@@ -102,5 +137,17 @@ const styles = {
     color: "#fff",
     fontSize: "1rem",
     cursor: "pointer",
+  },
+  signupText: {
+    textAlign: "center",
+    marginTop: "1rem",
+    fontSize: "0.95rem",
+    color: "#333",
+  },
+  signupLink: {
+    color: "#0070f3",
+    textDecoration: "none",
+    fontWeight: "bold",
+    marginLeft: "5px",
   },
 };

@@ -71,3 +71,21 @@
     }
   }
   
+  .signupText {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #333;
+  }
+  
+  .signupLink {
+    color: #0070f3;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+  }
+  
+  .signupLink:hover {
+    text-decoration: underline;
+  }
+  

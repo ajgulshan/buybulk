@@ -1,12 +1,17 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import styles from "../styles/CatalogForm.module.css";
+import Message from "../components/Message";
 
 export default function CatalogForm() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [message, setMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async (data) => {
+    setSuccessMessage("");
+    setErrorMessage("");
     const formData = new FormData();
     for (const key in data) {
       if (key === "image") {
@@ -24,16 +29,16 @@ export default function CatalogForm() {
 
       const result = await res.json();
       if (res.status === 409) {
-        alert(result.error); // SKU already exists
+        setErrorMessage(result.error); //Sku exists
       } else if (!res.ok) {
-        alert(result.message || "Something went wrong");
+        setErrorMessage(result.message || "Something went wrong");
       } else {
-        alert("Product added successfully!");
-        setMessage("Product added successfully");
+        //alert("Product added successfully!");
+        setSuccessMessage(result.message || "Product added successfully!");
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong");
+      setErrorMessage("Something went wrong");
     }
   };
 
@@ -84,6 +89,8 @@ export default function CatalogForm() {
       <label>Image:</label>
       <input className={styles.input}{...register("image", { required: "Image is required" })} type="file" accept="image/*" />
       {errors.image && <span className={styles.error}>{errors.image.message}</span>}
+      <Message type="success" text={successMessage} />
+      <Message type="error" text={errorMessage} />
 
       <button className={styles.button}>Submit</button>
       {message && <p className={styles.success}>{message}</p>}

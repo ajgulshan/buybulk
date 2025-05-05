@@ -13,19 +13,18 @@ export default async function handler(req, res) {
       database: process.env.DB_NAME,
     });
 
-    //const [existingUser] = await db.execute("SELECT * FROM Users WHERE mobile = ?", [mobile]);
     const [existingUser] = await db.execute(
       "SELECT * FROM Users WHERE mobile = ? OR email = ?",
       [mobile, email]
     );
     
     if (existingUser.length > 0) {
-      return res.status(409).json({ error: "Mobile number or email already exists, kidly login or register with new number" });
+      return res.status(409).json({ error: "Mobile number or email already exists, kindly login or register with new number" });
     }
 
     await db.execute(
-      "INSERT INTO Users (name, gender, email, mobile, gst, customerType, address, pincode, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [name, gender, email, mobile, gst, customerType, address, pincode, city]
+      "INSERT INTO Users (name, gender, email, mobile, gst, customerType, address, pincode, city, customerGroup) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [name, gender, email, mobile, gst, customerType, address, pincode, city, "A"]
     );
 
     res.status(200).json({ message: "User registered successfully" });
