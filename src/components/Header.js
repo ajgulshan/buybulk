@@ -15,7 +15,7 @@ useEffect(() => {
     <header className={styles.header}>
       <div className={styles.logo}>
         <Link href="/">
-          <Image src="/auction.png" alt="Auction" width={120} height={50} />
+          <Image src="/auction.jpeg" alt="Auction" width={120} height={50} />
         </Link>
       </div>
 
