@@ -1,7 +1,10 @@
 import mysql from "mysql2/promise";
+import { Resend } from 'resend';
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
+  const { name, userEmail, message } = req.body;
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const {
@@ -44,6 +47,12 @@ export default async function handler(req, res) {
         userEmail || "test@email",
       ]
     );
+    resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: userEmail,
+      subject: 'BuyBulk Notification',
+      html: `this product ${name} notified from you, We will connect you soon.<br>further query please `
+    });
 
     res.status(200).json({ message: "Notify request added, We will Reach to you. Kindly check your email" });
   } catch (error) {
