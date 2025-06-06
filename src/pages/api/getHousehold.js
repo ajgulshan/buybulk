@@ -1,4 +1,4 @@
-// pages/api/getCatalogProducts.js
+// pages/api/getHousehold.js
 import mysql from "mysql2/promise";
 
 export default async function handler(req, res) {

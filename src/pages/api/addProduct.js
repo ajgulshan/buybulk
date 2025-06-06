@@ -1,7 +1,8 @@
-import formidable from "formidable";
 import mysql from "mysql2/promise";
+import { IncomingForm } from "formidable";
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 
 export const config = {
   api: {
@@ -14,32 +15,43 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const form = formidable({
-    multiples: false,
-    uploadDir: path.join(process.cwd(), "public/uploads"),
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const uploadFolder = path.join(process.cwd(), "public", "uploads", "sku");
+  if (!fs.existsSync(uploadFolder)) {
+    fs.mkdirSync(uploadFolder, { recursive: true });
+  }
+
+  const form = new IncomingForm({
+    multiples: true,
     keepExtensions: true,
+    uploadDir: uploadFolder,
   });
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      console.error("Form parse error:", err);
-      return res.status(500).json({ message: "Error parsing form data" });
+      console.error("Formidable error:", err);
+      return res.status(500).json({ message: "Form parsing error", error: err.message });
     }
 
-    const name = fields.name?.[0] ?? null;
-    const sku = fields.sku?.[0] ?? null;
-    const brand = fields.brand?.[0] ?? null;
-    const mrp = fields.mrp?.[0] ?? null;
-    const offerprice = fields.offerPrice?.[0] ?? null;
-    const quantity = fields.quantity?.[0] ?? null;
-    const verified = fields.verified?.[0] ?? null;
-    const description = fields.description?.[0] ?? null;
-    const image = files.image ? `${sku}.jpg` : null;
-    if (files.image && sku) {
-      const oldPath = files.image[0].filepath;
-      const newPath = path.join(process.cwd(), "public/uploads", `${sku}.jpg`); 
-      fs.renameSync(oldPath, newPath);
-    }
+    const {
+      name,
+      pricePerPiece,
+      brand,
+      moq,
+      quantity,
+      verified,
+      city,
+      address,
+      state,
+      category,
+      description,
+      catalog,
+      bbn,
+    } = fields;
 
     try {
       const db = await mysql.createConnection({
@@ -49,35 +61,81 @@ export default async function handler(req, res) {
         database: process.env.DB_NAME,
       });
 
-      const [existing] = await db.execute("SELECT * FROM product WHERE sku = ?", [sku]);
+      const [rows] = await db.query("SELECT COUNT(*) AS count FROM products");
+      const skuNumber = rows[0].count + 1;
+      const sku = `bbsku${skuNumber}`;
 
-      if (existing.length > 0) {
-        return res.status(409).json({ error: "SKU already exists, upload product with a new SKU" });
+      const parsedCategory = Array.isArray(category) ? category : [category];
+      const catalogValue = Array.isArray(catalog) ? catalog[0] : catalog;
+      const catalogType = catalogValue === "BuyBulk Self" ? 1 : 0;
+      const handleImage = async (file, suffix) => {
+        if (!file || !file.filepath) return "";
+        const filename = `${sku}${suffix}.jpg`;
+        const destPath = path.join(uploadFolder, filename);
+      
+        try {
+          await sharp(file.filepath)
+            .jpeg({ quality: 80 })
+            .toFile(destPath);
+      
+          fs.unlinkSync(file.filepath);
+          return filename;
+        } catch (err) {
+          console.error(`Error converting/saving image with suffix ${suffix}:`, err);
+          return "";
+        }
+      };
+      
+
+      // 🧠 Await image processing
+      const mainImage = await handleImage(files.image?.[0], "imgd");
+      const optionalImg1 = await handleImage(files.image1?.[0], "imgda");
+      const optionalImg2 = await handleImage(files.image2?.[0], "imgdb");
+
+
+      // 🧠 Parse `bbn` correctly (handle stringified JSON safely)
+      let parsedBBN = {};
+      try {
+        parsedBBN = Array.isArray(bbn)
+          ? JSON.parse(bbn[0])
+          : JSON.parse(bbn);
+      } catch (e) {
+        console.warn("Could not parse BBN:", bbn);
       }
 
-      const safe = (value) => (typeof value === "undefined" ? null : value);
-
-      await db.execute(
-        `INSERT INTO product (name, sku, brand, mrp, quantity, offerprice, verified, description, image)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      await db.query(
+        `INSERT INTO products 
+         (sku, name, price_per_piece, brand, moq, quantity, verified, city, address, state, category, description, catalog_type, image_main, image1, image2, bbn) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          safe(name),
-          safe(sku),
-          safe(brand),
-          safe(mrp),
-          safe(quantity),
-          safe(offerprice),
-          safe(verified),
-          safe(description),
-          safe(image),
+          sku,
+          name,
+          pricePerPiece,
+          brand,
+          moq,
+          quantity,
+          verified,
+          city,
+          address,
+          state,
+          parsedCategory.join(","),
+          description,
+          catalogType,
+          mainImage || "",
+          optionalImg1 || "",
+          optionalImg2 || "",
+          JSON.stringify(parsedBBN),
         ]
       );
 
-
-      return res.status(200).json({ message: "Product added successfully" });
-    } catch (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ message: "Database error" });
+      return res.status(200).json({ message: "Product added successfully!" });
+    } catch (error) {
+      console.error("Server Error:", error);
+      return res.status(500).json({
+        message: "Server error",
+        error: error.message,
+        stack: error.stack,
+      });
     }
   });
 }

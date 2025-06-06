@@ -49,7 +49,7 @@ export default async function handler(req, res) {
     );
     resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: userEmail,
+      to: 'utalawar16@gmail.com',
       subject: 'BuyBulk Notification',
       html: `this product ${name} notified from you, We will connect you soon.<br>further query please `
     });

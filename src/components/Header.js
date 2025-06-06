@@ -1,34 +1,81 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import styles from "../styles/Header.module.css";
-export default function Header() {
-const [loggedIn, setLoggedIn] = useState(false);
-const router = useRouter();
 
-useEffect(() => {
-  setLoggedIn(!!localStorage.getItem('token'));
-}, []);
+export default function Header() {
+  const [menuVisible, setMenuVisible] = useState(false);
+  const router = useRouter();
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const goToProfile = () => {
+    router.push("/profile");
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const header = document.querySelector("header");
+      if (window.scrollY > 100) {
+        header?.classList.add("sticky");
+      } else {
+        header?.classList.remove("sticky");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className={styles.header}>
-      <div className={styles.logo}>
-        <Link href="/">
-          <Image src="/auction.jpeg" alt="Auction" width={120} height={50} />
-        </Link>
-      </div>
+    <>
+      <header className={styles.header}>
+        
+        <div className={styles.logo}>
+          <Link href="/">
+            <Image
+              className={styles.logoImg}
+              src="/auction.jpeg"
+              alt="Auction"
+              width={120}
+              height={50}
+            />
+          </Link>
+        </div>
 
-      <nav className={styles.nav}>
-        <ul>
-          <li><Link href="/">Home</Link></li>
-          <li><Link href="/new-arrival">NewArrival</Link></li>
-          <li><Link href="/auction">Auction</Link></li>
-          <li><Link href="/profile">Profile</Link></li>
+        <div className={styles.rightSection}>
+          <div className={styles.iconGroup}>
+            <button onClick={toggleMenu} className={styles.iconButton}>
+              &#9776;
+            </button>
 
-          {/* {loggedIn ? <a href="/profile">Profile</a> : <ul><li><a href="/login">Login</a></li> <li><a href="/register">Register</a></li></ul>} */}
-        </ul>
-      </nav>
-    </header>
+            <button onClick={goToProfile} className={styles.iconButton}>
+              👤
+            </button>
+          </div>
+        </div>
+
+        {menuVisible && (
+          <div className={styles.popupMenu}>
+            <button onClick={() => setMenuVisible(false)} className={styles.closeButton}>
+              ✕
+            </button>
+            <ul>
+              <li><Link href="/">Home</Link></li>
+              <li><Link href="/catalogue">Catalog</Link></li>
+              <li><Link href="/auction">Auction</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
+              <li><Link href="/vendor">SignUp as Vendor</Link></li>
+            </ul>
+          </div>
+        )}
+      </header>
+
+      {/* Optional red separator line */}
+      <div style={{ height: "3px", backgroundColor: "red", width: "100%" }}></div>
+    </>
   );
-};
+}

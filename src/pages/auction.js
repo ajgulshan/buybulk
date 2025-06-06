@@ -1,4 +1,4 @@
-// pages/auction.js
+// // pages/auction.js
 import styles from "../styles/Auction.module.css";
 
 export default function Auction() {
