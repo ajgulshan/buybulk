@@ -64,11 +64,13 @@ export default function Header() {
               ✕
             </button>
             <ul>
-              <li><Link href="/">Home</Link></li>
-              <li><Link href="/catalogue">Catalog</Link></li>
-              <li><Link href="/auction">Auction</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
-              <li><Link href="/vendor">SignUp as Vendor</Link></li>
+              <li><Link href="/">HOME</Link></li>
+              <li><Link href="/catalogue">BUYBULK CATALOGUE</Link></li>
+              <li><Link href="/household">BUYBULK HOUSE CATALOGUE</Link></li>
+              <li><Link href="/catalog">SELL YOUR SURPLUS</Link></li>
+              <li><Link href="/auction">e-AUCTION</Link></li>
+              <li><Link href="/contact">CONTACT-US</Link></li>
+              
             </ul>
           </div>
         )}

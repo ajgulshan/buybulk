@@ -1,29 +1,15 @@
 import { useState } from "react";
-import { useRouter } from "next/router"; // ✅ Import useRouter
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import styles from "../styles/RegistrationForm.module.css";
 import Link from 'next/link';
 import Message from "../components/Message";
 
 const RegistrationForm = () => {
-  const router = useRouter(); // ✅ Initialize router
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
-  const [city, setCity] = useState("");
+  const router = useRouter();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
-  // Function to fetch city based on pincode (Dummy function, replace with actual API)
-  // const fetchCityByPincode = async (pincode) => {
-  //   if (pincode.length === 6) {
-  //     const cityData = {
-  //       "110001": "New Delhi",
-  //       "400001": "Mumbai",
-  //       "560001": "Bangalore"
-  //     };
-  //     setCity(cityData[pincode] || "Unknown City");
-  //     setValue("city", cityData[pincode] || "Unknown City");
-  //   }
-  // };
 
   const onSubmit = async (data) => {
     setSuccessMessage("");
@@ -34,16 +20,14 @@ const RegistrationForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-  
+
       const result = await res.json();
-  
+
       if (!res.ok) {
         setErrorMessage(result.error || "Something went wrong");
       } else {
         setSuccessMessage("User registered successfully!");
-        setTimeout(() => {
-          router.push("/login"); // ✅ Redirect to login
-        }, 1500);
+        setTimeout(() => router.push("/login"), 1500);
       }
     } catch (err) {
       console.error(err);
@@ -59,14 +43,20 @@ const RegistrationForm = () => {
       <input {...register("name", { required: "Name is required" })} type="text" />
       {errors.name && <span className={styles.error}>{errors.name.message}</span>}
 
-      <label>Gender:</label>
-      <select {...register("gender", { required: "Gender is required" })}>
-        <option value="">Select Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
+      <label>Preferable Category:</label>
+      <select {...register("preferableCategory", { required: "Category is required" })}>
+        <option value="">Select Category</option>
+        <option value="Men Wear">Men Wear</option>
+        <option value="Women Wear">Women Wear</option>
+        <option value="Kids Wear">Kids Wear</option>
+        <option value="Mix lot -Mens/womens/Kids/Footwear/ Accessories">Mix lot -Mens/womens/Kids/Footwear/ Accessories</option>
+        <option value="Electronic items-TV/Fridge/AC/Washing Machine">Electronic items-TV/Fridge/AC/Washing Machine</option>
       </select>
-      {errors.gender && <span className={styles.error}>{errors.gender.message}</span>}
+      {errors.preferableCategory && <span className={styles.error}>{errors.preferableCategory.message}</span>}
+
+      <label>Company Name:</label>
+      <input {...register("companyName", { required: "Company Name is required" })} type="text" />
+      {errors.companyName && <span className={styles.error}>{errors.companyName.message}</span>}
 
       <label>Email:</label>
       <input
@@ -89,7 +79,7 @@ const RegistrationForm = () => {
       {errors.mobile && <span className={styles.error}>{errors.mobile.message}</span>}
 
       <label>GST Number:</label>
-      <input {...register("gst")} type="text" placeholder="Optional" />
+      <input {...register("gst")} type="text" placeholder="Add your GST" />
 
       <label>Customer Type:</label>
       <select {...register("customerType", { required: "Customer type is required" })}>
@@ -97,9 +87,23 @@ const RegistrationForm = () => {
         <option value="Buyer">Buyer</option>
         <option value="Seller">Seller</option>
         <option value="Manufacturer">Manufacturer</option>
-        <option value="both">Buyer-Seller</option>
+        <option value="Buyer-Seller">Buyer-Seller</option>
       </select>
       {errors.customerType && <span className={styles.error}>{errors.customerType.message}</span>}
+
+      <label>Turnover:</label>
+      <select {...register("turnover", { required: "Turnover is required" })}>
+        <option value="">Select Turnover</option>
+        <option value="Upto 10lacs">Upto 10lacs</option>
+        <option value="10lacs to 25lacs">10lacs to 25lacs</option>
+        <option value="25lacs to 50lacs">25lacs to 50lacs</option>
+        <option value="50lacs to 1Cr">50lacs to 1Cr</option>
+        <option value="1cr to 2cr">1cr to 2cr</option>
+        <option value="2cr to 5cr">2cr to 5cr</option>
+        <option value="5cr to 10cr">5cr to 10cr</option>
+        <option value="10cr to 50Cr above">10cr to 50Cr above</option>
+      </select>
+      {errors.turnover && <span className={styles.error}>{errors.turnover.message}</span>}
 
       <label>Address:</label>
       <textarea {...register("address", { required: "Address is required" })}></textarea>
@@ -118,15 +122,14 @@ const RegistrationForm = () => {
       <label>City:</label>
       <input {...register("city", { required: "City is required" })} type="text" />
       {errors.city && <span className={styles.error}>{errors.city.message}</span>}
+
       <Message type="success" text={successMessage} />
       <Message type="error" text={errorMessage} />
 
       <button type="submit">Register</button>
       <p className={styles.signupText}>
-        Existing User?
-        <Link href="/login" className={styles.signupLink}>Sign In</Link>
+        Existing User? <Link href="/login" className={styles.signupLink}>Sign In</Link>
       </p>
-
     </form>
   );
 };

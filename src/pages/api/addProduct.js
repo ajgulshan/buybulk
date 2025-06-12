@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       brand,
       moq,
       quantity,
-      verified,
+      verified: rawVerified,
       city,
       address,
       state,
@@ -52,6 +52,14 @@ export default async function handler(req, res) {
       catalog,
       bbn,
     } = fields;
+    
+    const verified =
+      rawVerified && typeof rawVerified === "string"
+        ? rawVerified.toLowerCase() === "yes"
+          ? 1
+          : 0
+        : 0;
+    
 
     try {
       const db = await mysql.createConnection({

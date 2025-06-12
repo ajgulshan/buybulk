@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -12,7 +13,7 @@ export default function Household() {
     fetch("/api/getHousehold")
       .then((res) => res.json())
       .then((data) => {
-        console.log("📦 Full product list:", data.products);
+        // console.log("📦 Full product list:", data.products);
         setProducts(data.products || []);
         setFiltered(data.products || []);
 
@@ -47,7 +48,7 @@ export default function Household() {
 
   return (
     <div className="bg-gray-100 p-6 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-center">BuyBulk Household</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">BUYBULK HOUSE CATALOGUE</h1>
 
       {/* Mobile Filter Button and Clear */}
       <div className="md:hidden flex justify-center gap-4 mb-4">
@@ -140,24 +141,32 @@ export default function Household() {
 
         {/* Product Grid */}
         <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {filtered.map((p) => (
+          
+        {filtered
+          .filter((p) => parseInt(p.quantity) > parseInt(p.moq)) // ✅ Only show if quantity > moq
+          .map((p) => (
             <Link href={`/pdp/${p.id}`} key={p.id}>
-            <div className="cursor-pointer bg-white shadow-lg hover:shadow-2xl transition duration-300 ease-in-out p-4 rounded-2xl text-center transform hover:scale-105">
-              <div className="w-full h-56 bg-white mb-3 flex items-center justify-center overflow-hidden rounded-lg">
-                <img
-                  src={`/uploads/sku/${p.sku}imgd.jpg`}
-                  alt={p.name}
-                  className="object-contain h-full w-full"
-                />
+              <div className="cursor-pointer bg-white shadow-lg hover:shadow-2xl transition duration-300 ease-in-out p-4 rounded-2xl text-center transform hover:scale-105 relative">
+                {/* ✅ Green Tick if verified */}
+                {p.verified === 1 && (
+                  <div className="absolute top-2 right-2 text-white rounded-full p-1">
+                    ✅
+                  </div>
+                )}
+                <div className="w-full h-56 bg-white mb-3 flex items-center justify-center overflow-hidden rounded-lg">
+                  <img
+                    src={`/uploads/sku/${p.sku}imgd.jpg`}
+                    alt={p.name}
+                    className="object-contain h-full w-full"
+                  />
+                </div>
+                <p className="text-sm text-orange-600 uppercase">{p.category}</p>
+                <h2 className="text-md font-semibold">{p.name}</h2>
+                <p className="text-md text-green-600 font-bold">Rs {p.price_per_piece}</p>
               </div>
-              <p className="text-sm text-orange-600 uppercase">{p.category}</p>
+            </Link>
+        ))}
 
-              <h2 className="text-md font-semibold">{p.name}</h2>
-              
-              <p className="text-md text-green-600 font-bold">Rs {p.price_per_piece}</p>
-            </div>
-          </Link>
-          ))}
         </div>
       </div>
     </div>

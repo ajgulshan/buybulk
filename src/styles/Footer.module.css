@@ -2,7 +2,7 @@
   
   /* Desktop Footer */
   .desktopFooter {
-    background-color: rgba(248, 167, 0, 1);
+    background-color: white;
     color: red;
     padding: 40px 20px;
     display: block;
@@ -50,7 +50,7 @@
   
     .footerToggle {
       background: black;
-      color: rgba(248, 167, 0, 1);
+      color: white;
       text-align: center;
       padding: 12px;
       cursor: pointer;
@@ -68,7 +68,7 @@
     }
   
     .mobileFooter {
-      background: rgba(248, 167, 0, 1);
+      background: white;
       color: red;
       padding: 20px;
       animation: slideIn 0.3s ease-in-out;
@@ -114,5 +114,20 @@
     padding: 12px 0;
     font-size: 14px;
   }
+
+  .desktopFooter {
+    border: 2px solid red;        /* Adds red border on all four sides */
+    background-color: #f8f8f8;
+    padding: 2rem;
+    margin: 0 auto;
+  }
+  
+  .mobileFooterWrapper {
+    border: 2px solid red;        /* Adds red border on all four sides */
+    background-color: #f8f8f8;
+    padding: 1rem;
+    margin: 0 auto;
+  }
+  
   
   

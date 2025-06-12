@@ -92,14 +92,15 @@ export default function CatalogForm() {
       <label>Total Quantity:</label>      {errors.quantity && <span className={styles.error}>{errors.quantity.message}</span>}
 
       <input className={styles.input} type="number" {...register("quantity", { required: "Quantity is required" })} />
-
-      <label>Verified:</label>      {errors.verified && <span className={styles.error}>Please select verification status</span>}
-
+      {showCatalogType && (
+        <>
+      <label>Verified:</label>      {errors.verified && <span className={styles.error}>Please select verification status</span>} 
       <div className={styles.radioGroup}>
         <label><input type="radio" value="yes" {...register("verified", { required: true })} /> Yes</label>
         <label><input type="radio" value="no" {...register("verified", { required: true })} /> No</label>
       </div>
-
+      </>
+      )}
       <label>City:</label>      {errors.city && <span className={styles.error}>{errors.city.message}</span>}
 
       <input className={styles.input} {...register("city", { required: "City is required" })} />
@@ -111,10 +112,43 @@ export default function CatalogForm() {
       <label>State:</label>      {errors.state && <span className={styles.error}>{errors.state.message}</span>}
 
       <select className={styles.select} {...register("state", { required: "State is required" })}>
-        <option value="">Select State</option>
+      <option value="">Select State</option>
+        <option value="Andhra Pradesh">Andhra Pradesh</option>
+        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+        <option value="Assam">Assam</option>
+        <option value="Bihar">Bihar</option>
+        <option value="Chhattisgarh">Chhattisgarh</option>
+        <option value="Goa">Goa</option>
+        <option value="Gujarat">Gujarat</option>
+        <option value="Haryana">Haryana</option>
+        <option value="Himachal Pradesh">Himachal Pradesh</option>
+        <option value="Jharkhand">Jharkhand</option>
         <option value="Karnataka">Karnataka</option>
+        <option value="Kerala">Kerala</option>
+        <option value="Madhya Pradesh">Madhya Pradesh</option>
         <option value="Maharashtra">Maharashtra</option>
+        <option value="Manipur">Manipur</option>
+        <option value="Meghalaya">Meghalaya</option>
+        <option value="Mizoram">Mizoram</option>
+        <option value="Nagaland">Nagaland</option>
+        <option value="Odisha">Odisha</option>
+        <option value="Punjab">Punjab</option>
+        <option value="Rajasthan">Rajasthan</option>
+        <option value="Sikkim">Sikkim</option>
         <option value="Tamil Nadu">Tamil Nadu</option>
+        <option value="Telangana">Telangana</option>
+        <option value="Tripura">Tripura</option>
+        <option value="Uttar Pradesh">Uttar Pradesh</option>
+        <option value="Uttarakhand">Uttarakhand</option>
+        <option value="West Bengal">West Bengal</option>
+        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+        <option value="Chandigarh">Chandigarh</option>
+        <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+        <option value="Delhi">Delhi</option>
+        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+        <option value="Ladakh">Ladakh</option>
+        <option value="Lakshadweep">Lakshadweep</option>
+        <option value="Puducherry">Puducherry</option>
       </select>
 
       <label>Category:</label>

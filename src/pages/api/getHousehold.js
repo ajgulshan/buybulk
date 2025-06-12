@@ -15,10 +15,10 @@ export default async function handler(req, res) {
     });
 
     const [rows] = await db.execute(
-      "SELECT * FROM products WHERE catalog_type = 1 ORDER BY id DESC"
+      "SELECT * FROM products WHERE catalog_type = 0 ORDER BY id DESC"
     );
 
-    console.log("📦 All catalog products:", rows); // <-- Log all fields to console
+    // console.log("📦 All catalog products:", rows); // <-- Log all fields to console
 
     res.status(200).json({ products: rows });
   } catch (error) {

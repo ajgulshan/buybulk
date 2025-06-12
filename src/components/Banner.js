@@ -18,18 +18,23 @@ const Banner = () => {
         navigation
       >
         <SwiperSlide>
-          <Link href="/">
+          <Link href="/catalogue">
             <img src="uploads/bb1.jpeg" alt="Banner 1" className={styles.image} />
           </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <Link href="/">
+          <Link href="/household">
             <img src="uploads/bb2.jpeg" alt="Banner 2" className={styles.image} />
           </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <Link href="/">
+          <Link href="/catalog">
             <img src="uploads/bb3.jpeg" alt="Banner 3" className={styles.image} />
+          </Link>
+        </SwiperSlide>
+        <SwiperSlide>
+          <Link href="/auction">
+            <img src="uploads/bb1.jpeg" alt="Banner 1" className={styles.image} />
           </Link>
         </SwiperSlide>
       </Swiper>
