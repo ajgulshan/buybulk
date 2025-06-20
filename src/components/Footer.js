@@ -43,9 +43,22 @@ export default function Footer() {
           <h4><strong>Support Us</strong></h4>
             <hr />
             <div className={styles.socials}>
-              <Image src="/facebook.png" alt="Facebook" width={24} height={24} />
-              <Image src="/instagram.png" alt="Instagram" width={24} height={24} />
-              <Image src="/twiter.png" alt="Twitter" width={24} height={24} />
+              <a href="https://www.facebook.com/share/14F2jDn3qnQ/" target="_blank" rel="noopener noreferrer">
+                <Image src="/facebook.png" alt="Facebook" width={24} height={24} />
+              </a>
+
+              <a href="https://www.instagram.com/buybulkindia/?igsh=MWtnaGNobWtmOTkycQ%3D%3D#/" target="_blank" rel="noopener noreferrer">
+                <Image src="/instagram.png" alt="Instagram" width={24} height={24} />
+              </a>
+
+              <a href="https://www.twitter.com/your-handle" target="_blank" rel="noopener noreferrer">
+                <Image src="/twiter.png" alt="Twitter" width={24} height={24} />
+              </a>
+
+            {/* <a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer">
+              <Image src="/linkedin.png" alt="LinkedIn" width={24} height={24} />
+            </a> */}
+
             </div>
           </div>
         </div>
@@ -77,9 +90,17 @@ export default function Footer() {
             <h4><strong>Support Us</strong></h4>
             <hr />
             <div className={styles.socials}>
-              <Image src="/facebook.png" alt="Facebook" width={24} height={24} />
-              <Image src="/instagram.png" alt="Instagram" width={24} height={24} />
-              <Image src="/twiter.png" alt="Twitter" width={24} height={24} />
+            <a href="https://www.facebook.com/share/14F2jDn3qnQ/" target="_blank" rel="noopener noreferrer">
+                <Image src="/facebook.png" alt="Facebook" width={24} height={24} />
+              </a>
+
+              <a href="https://www.instagram.com/buybulkindia/?igsh=MWtnaGNobWtmOTkycQ%3D%3D#/" target="_blank" rel="noopener noreferrer">
+                <Image src="/instagram.png" alt="Instagram" width={24} height={24} />
+              </a>
+
+              <a href="https://www.twitter.com/your-handle" target="_blank" rel="noopener noreferrer">
+                <Image src="/twiter.png" alt="Twitter" width={24} height={24} />
+              </a>
             </div>
           </div>
         )}

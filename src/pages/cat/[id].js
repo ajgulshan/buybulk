@@ -186,7 +186,7 @@ export default function CAT() {
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button onClick={handleInquiry} className="bg-blue-600 text-white px-6 py-2 rounded w-full sm:w-auto min-w-[150px] text-center">Submit Inquiry</button>
-                <a href={`https://wa.me/919534692414?text=${encodeURIComponent(`Hello, I am interested in the product "${product.name}".\nPrice per piece: ₹${product.price_per_piece}\nMOQ: ${product.moq}`)}`} target="_blank" rel="noopener noreferrer" className="bg-green-600 text-white px-6 py-2 rounded w-full sm:w-auto min-w-[150px] text-center flex items-center justify-center">WhatsApp</a>
+                <a href={`https://wa.me/919741132528?text=${encodeURIComponent(`Hello, I am interested in the product "${product.name}".\nPrice per piece: ₹${product.price_per_piece}\nMOQ: ${product.moq}`)}`} target="_blank" rel="noopener noreferrer" className="bg-green-600 text-white px-6 py-2 rounded w-full sm:w-auto min-w-[150px] text-center flex items-center justify-center">WhatsApp</a>
               </div>
             </div>
           )}
