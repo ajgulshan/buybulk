@@ -11,6 +11,8 @@ const Contact = () => {
     consent: false,
   });
 
+  const [feedback, setFeedback] = useState({ type: "", text: "" }); // success | error
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
@@ -18,60 +20,77 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("/api/contact", formData);
-    alert("Submitted successfully!");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-      consent: false,
-    });
+    try {
+      await axios.post("/api/contact", formData);
+      setFeedback({ type: "success", text: "Submitted successfully!" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        consent: false,
+      });
+    } catch (error) {
+      console.error("Submit error:", error);
+      setFeedback({ type: "error", text: "Something went wrong. Please try again." });
+    }
   };
 
   return (
     <div className="min-h-screen bg-white">
       <div className="flex flex-col lg:flex-row w-full shadow-xl m-4">
         {/* Left Black Section */}
-        <div className="bg-black text-white p-8 lg:w-1/2">
         <div className="bg-black text-white p-8 lg:w-1/2 flex flex-col gap-6">
-        {/* Email */}
-        <div className="flex items-start gap-4">
+          {/* Email */}
+          <div className="flex items-start gap-4">
             <span className="text-yellow-400 text-2xl">✉️</span>
             <div>
-            <h2 className="text-lg font-bold">Write to Us</h2>
-            <a href="mailto:contact@buybulk.co.in" className="hover:underline">
+              <h2 className="text-lg font-bold">Write to Us</h2>
+              <a href="mailto:contact@buybulk.co.in" className="hover:underline">
                 contact@buybulk.co.in
-            </a>
+              </a>
             </div>
-        </div>
+          </div>
 
-        {/* Phone */}
-        <div className="flex items-start gap-4">
+          {/* Phone */}
+          <div className="flex items-start gap-4">
             <span className="text-yellow-400 text-2xl">📞</span>
             <div>
-            <h2 className="text-lg font-bold">Call Us</h2>
-            <a href="tel:08130497050" className="hover:underline">
+              <h2 className="text-lg font-bold">Call Us</h2>
+              <a href="tel:08130497050" className="hover:underline">
                 081304 97050
-            </a>
+              </a>
             </div>
-        </div>
+          </div>
 
-        {/* Address */}
-        <div className="flex items-start gap-4">
+          {/* Address */}
+          <div className="flex items-start gap-4">
             <span className="text-yellow-400 text-2xl">📍</span>
             <div>
-            <h2 className="text-lg font-bold">Store Address</h2>
-            <p>Plot No-31, 3rd Floor, Esskay House, Sector 18,<br />Gurugram, Haryana 122015</p>
+              <h2 className="text-lg font-bold">Store Address</h2>
+              <p>
+                
+                1st Floor, No. 60, Shirdi Sai Baba Mandir Rd, Halasuru,<br />
+                 Cambridge Layout, Bengaluru,<br />
+                  Karnataka 560008
+              </p>
             </div>
-        </div>
-        </div>
-
+          </div>
         </div>
 
         {/* Right Form Section */}
         <div className="p-8 lg:w-1/2 border border-red-500">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">LOOKING FORWARD TO HEARING FROM YOU</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            LOOKING FORWARD TO HEARING FROM YOU
+          </h2>
+
+          {/* Feedback Message */}
+          {feedback.text && (
+            <p className={`mb-4 text-sm font-semibold ${feedback.type === "success" ? "text-green-600" : "text-red-600"}`}>
+              {feedback.text}
+            </p>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label>Your Name *</label>
@@ -104,8 +123,12 @@ const Contact = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full border border-red-500 px-4 py-2"
+                pattern="[0-9]{10}"
+                maxLength={10}
+                title="Please enter a 10-digit mobile number"
               />
             </div>
+
             <div>
               <label>Message *</label>
               <textarea
@@ -123,7 +146,9 @@ const Contact = () => {
                 checked={formData.consent}
                 onChange={handleChange}
               />
-              <label>I Authorize BuyBulk to send notifications via SMS/Whatsapp/Email</label>
+              <label>
+                I Authorize BuyBulk to send notifications via SMS/Whatsapp/Email
+              </label>
             </div>
             <button
               type="submit"

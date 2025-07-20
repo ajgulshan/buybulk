@@ -15,7 +15,6 @@ export default function CatalogForm() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const bbn = localStorage.getItem("bbn");
-
     if (!token && !bbn) {
       router.push("/profile");
     }

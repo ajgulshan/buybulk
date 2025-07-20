@@ -1,106 +1,90 @@
-import { useEffect, useState, useRef } from 'react';
-import io from 'socket.io-client';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import axios from "axios";
 
-const socket = io('http://localhost:4000');
+export default function AuctionPage() {
+  const [auctions, setAuctions] = useState([]);
 
-export default function LiveAuction() {
-  const [currentBid, setCurrentBid] = useState(100);
-  const [bids, setBids] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(120); // in seconds
-  const [auctionEnded, setAuctionEnded] = useState(false);
-  const bidRef = useRef(null);
-
-  // Timer logic
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          setAuctionEnded(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
+    const fetchAuctions = async () => {
+      try {
+        const res = await axios.get("/api/auction/all");
+        setAuctions(res.data);
+      } catch (error) {
+        console.error("Failed to load auctions", error);
+      }
+    };
+    fetchAuctions();
   }, []);
 
-  // Socket listeners
-  useEffect(() => {
-    socket.on('init', ({ currentBid, bids }) => {
-      setCurrentBid(currentBid);
-      setBids(bids);
-    });
+  const getLiveTillInfo = (bidStartTime, duration) => {
+    const start = new Date(bidStartTime);
+    const end = new Date(start.getTime() + duration * 60000);
+    const now = new Date();
 
-    socket.on('newBid', (bid) => {
-      setCurrentBid(bid.bid);
-      setBids(prev => [...prev, bid]);
-    });
-  }, []);
+    const diffMs = end - now;
+    const remainingMin = Math.max(0, Math.floor(diffMs / 60000));
+    const remainingHr = Math.floor(remainingMin / 60);
+    const remainingMins = remainingMin % 60;
 
-  const placeBid = () => {
-    const bid = parseInt(bidRef.current.value);
-    if (auctionEnded) return;
-    if (bid > currentBid) {
-      socket.emit('placeBid', bid);
-      bidRef.current.value = '';
-    } else {
-      alert("Bid must be higher than current bid.");
-    }
-  };
-
-  // Convert seconds to MM:SS
-  const formatTime = (secs) => {
-    const m = Math.floor(secs / 60).toString().padStart(2, '0');
-    const s = (secs % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+    return {
+      liveTill: end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      remaining: diffMs > 0 ? `${remainingHr}h ${remainingMins}m` : "Ended",
+    };
   };
 
   return (
-    <div className="container">
-      <h1>🧥 Live Hoodie Auction</h1>
-      <img src="/pexels-kaip-996329.jpg" alt="hoodie" width="500" />
-      <p><strong>Current Bid:</strong> ₹{currentBid}</p>
-      <p className="timer">⏰ Time Left: {formatTime(timeLeft)}</p>
+    <div className="p-6 min-h-screen bg-gray-100">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Live Auctions</h1>
 
-      <input type="number" ref={bidRef} placeholder="Enter your bid" disabled={auctionEnded} />
-      <button onClick={placeBid} disabled={auctionEnded}>
-        {auctionEnded ? 'Auction Ended' : 'Place Bid'}
-      </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {auctions.map((auction) => {
+          const { liveTill, remaining } = getLiveTillInfo(auction.bidStartTime, auction.duration);
 
-      <h3>Bid History</h3>
-      <ul>
-        {bids.map((b, i) => (
-          <li key={i}>₹{b.bid} at {b.time}</li>
-        ))}
-      </ul>
+          return (
+            <div
+              key={auction.id}
+              className="relative rounded-xl overflow-hidden shadow-xl group hover:shadow-2xl transition"
+            >
+              {/* Full-card click layer */}
+<Link
+  href={`/auction/${auction.auctionId}`}
+  className="absolute inset-0 z-30"
+  aria-label="Go to auction"
+/>
 
-      <style jsx>{`
-        .container {
-          text-align: center;
-          font-family: sans-serif;
-          max-width: 600px;
-          margin: auto;
-          padding: 20px;
-        }
-        .timer {
-          font-size: 20px;
-          color: ${auctionEnded ? 'red' : 'green'};
-          margin-bottom: 10px;
-        }
-        input {
-          padding: 10px;
-          margin: 10px;
-        }
-        button {
-          background: ${auctionEnded ? '#888' : '#0070f3'};
-          color: white;
-          padding: 10px 20px;
-          border: none;
-          cursor: ${auctionEnded ? 'not-allowed' : 'pointer'};
-        }
-      `}</style>
+
+              {/* Background Image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center opacity-20 z-0"
+                style={{ backgroundImage: "url('/uploads/sst.jpg')" }}
+              ></div>
+
+              {/* White card content */}
+              <div className="bg-white p-4 rounded-xl shadow-md relative z-10">
+                {/* Time Info */}
+                <div className="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded flex items-center gap-1 z-20">
+                  <span>⏰</span>
+                  <span>
+                    {remaining !== "Ended" ? `Live till ${liveTill} (${remaining})` : "Auction Ended"}
+                  </span>
+                </div>
+
+                {/* Auction Content */}
+                <div className="relative z-20 space-y-1 text-gray-800">
+                  <h2 className="text-lg font-bold truncate">{auction.auctionName}</h2>
+                  <p className="text-sm">Brand: {auction.brand}</p>
+                  <p className="text-sm">Category: {auction.category}</p>
+                  <p className="text-sm font-medium">Initial Bid: ₹{auction.initialBid}</p>
+                  <p className="text-xs text-gray-600">
+                    {auction.description?.slice(0, 80)}...
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

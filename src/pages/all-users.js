@@ -1,9 +1,34 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function AllUsersPage() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check auth on mount
+    const token = localStorage.getItem("bbn");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const user = JSON.parse(token); // No JWT, just plain JSON string
+      const allowedNumbers = ["9534692414", "1234567890"];
+      if (allowedNumbers.includes(user.mobile)) {
+        setAuthorized(true);
+      } else {
+        router.push("/");
+      }
+    } catch (err) {
+      console.error("Token parse error:", err);
+      router.push("/login");
+    }
+  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -14,8 +39,10 @@ export default function AllUsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [search]);
+    if (authorized) {
+      fetchUsers();
+    }
+  }, [search, authorized]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -24,6 +51,10 @@ export default function AllUsersPage() {
   const clearSearch = () => {
     setSearch("");
   };
+
+  if (!authorized) {
+    return <p className="p-4">Checking access...</p>;
+  }
 
   return (
     <div className="p-4">

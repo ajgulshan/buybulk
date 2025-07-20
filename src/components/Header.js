@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -7,14 +7,10 @@ import styles from "../styles/Header.module.css";
 export default function Header() {
   const [menuVisible, setMenuVisible] = useState(false);
   const router = useRouter();
+  const menuRef = useRef();
 
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
-
-  const goToProfile = () => {
-    router.push("/profile");
-  };
+  const toggleMenu = () => setMenuVisible(!menuVisible);
+  const goToProfile = () => router.push("/profile");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,15 +21,24 @@ export default function Header() {
         header?.classList.remove("sticky");
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // ✅ Close menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuVisible && menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuVisible(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuVisible]);
+
   return (
     <>
       <header className={styles.header}>
-        
         <div className={styles.logo}>
           <Link href="/">
             <Image
@@ -59,24 +64,38 @@ export default function Header() {
         </div>
 
         {menuVisible && (
-          <div className={styles.popupMenu}>
+          <div ref={menuRef} className={styles.popupMenu}>
             <button onClick={() => setMenuVisible(false)} className={styles.closeButton}>
               ✕
             </button>
             <ul>
-              <li><Link href="/">HOME</Link></li>
-              <li><Link href="/catalogue">BUYBULK CATALOGUE</Link></li>
-              <li><Link href="/household">BUYBULK HOUSE CATALOGUE</Link></li>
-              <li><Link href="/catalog">SELL YOUR SURPLUS</Link></li>
-              <li><Link href="/auction">e-AUCTION</Link></li>
-              <li><Link href="/contact">CONTACT-US</Link></li>
-              
-            </ul>
+  <li>
+    <Link href="/" onClick={() => setMenuVisible(false)}>HOME</Link>
+  </li>
+  <li>
+    <Link href="/catalogue" onClick={() => setMenuVisible(false)}>BUYBULK CATALOGUE</Link>
+  </li>
+  <li>
+    <Link href="/household" onClick={() => setMenuVisible(false)}>BUYBULK HOUSE CATALOGUE</Link>
+  </li>
+  <li>
+    <Link href="/catalog" onClick={() => setMenuVisible(false)}>SELL YOUR SURPLUS</Link>
+  </li>
+  <li>
+    <Link href="/auction" onClick={() => setMenuVisible(false)}>e-AUCTION</Link>
+  </li>
+  <li>
+    <Link href="/contact" onClick={() => setMenuVisible(false)}>CONTACT-US</Link>
+  </li>
+  <li>
+    <Link href="/auctionprofile" onClick={() => setMenuVisible(false)}>BULK PROFILE</Link>
+  </li>
+</ul>
+
           </div>
         )}
       </header>
 
-      {/* Optional red separator line */}
       <div style={{ height: "3px", backgroundColor: "red", width: "100%" }}></div>
     </>
   );

@@ -17,7 +17,11 @@ export default function Footer() {
           {/* Column 1: Logo + Address */}
           <div className={styles.column}>
             <Image src="/auction.png" alt="Logo" width={80} height={80} />
-            <p className={styles.address}>123 Street Name,<br />City, State, ZIP</p>
+            <p className={styles.address}>
+            1st Floor, No. 60, Shirdi Sai Baba Mandir Rd, Halasuru,<br />
+                 Cambridge Layout, Bengaluru,<br />
+                  Karnataka 560008,<br />
+            </p>
           </div>
 
           {/* Column 2: About Us + Links */}
@@ -73,7 +77,11 @@ export default function Footer() {
         {isOpen && (
           <div className={styles.mobileFooter}>
             <Image src="/auction.jpeg" alt="Logo" width={60} height={60} className={styles.mobileLogo} />
-            <p className={styles.address}>123 Street Name,<br />City, State, ZIP</p>
+            <p className={styles.address}>
+            1st Floor, No. 60, Shirdi Sai Baba Mandir Rd, Halasuru,<br />
+                 Cambridge Layout, Bengaluru,<br />
+                  Karnataka 560008
+            </p>
 
             <h4><strong>About Us</strong></h4>
             <hr />
